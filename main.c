@@ -8,57 +8,20 @@
 int get_neighbours(int ** grid, int i, int j, int size)
 {
   int n = 0;
-  /*
-  if(i == 0){
-    n+= grid[size - 1][j];
-  } else {
-    n += grid[i + 1][j];
-  }
-  if(j == 0){
-    n+= grid[i][size - 1];
-  } else {
-    n += grid[i][j - 1];
-  }
-  if(i == (size - 1)){
-    n+= grid[0][j];
-  } else {
-    n+= grid[i + 1][j];
-  }
-  if(j == (size - 1)){
-    n+= grid[i][0];
-  } else {
-    n+= grid[i][j + 1];
-    }
-
-  if(i == 0 && j == 0){
-    
-  }
-*/
-
-  if((i + 1) > (size - 1)){
-    n += grid[0][j];
-  }
-
-
   
+  n += grid[i][(j + 1) > (size - 1) ? 0 : (j + 1)];
+  n += grid[i][(j - 1) >= 0 ? (j - 1) : (size - 1)];
   
-  n += grid[i + 1][j];
-  n += grid[i - 1][j];
+  n += grid[(i + 1) > (size - 1) ? 0 : (i + 1)][j];
+  n += grid[(i - 1) >= 0 ? (i - 1) : (size - 1)][j];
   
-  
-  n += grid[i][j - 1];
-  n += grid[i][j + 1];
+  n += grid[(i + 1) > (size - 1) ? 0 : (i + 1)][(j + 1) > (size - 1) ? 0 : (j + 1)];
+  n += grid[(i + 1) > (size - 1) ? 0 : (i + 1)][(j - 1) >= 0 ? (j - 1) : (size - 1)];
 
+  n += grid[(i - 1) >= 0 ? (i - 1) : (size - 1)][(j + 1) > (size - 1) ? 0 : (j + 1)];
+  n += grid[(i - 1) >= 0 ? (i - 1) : (size - 1)][(j - 1) >= 0 ? (j - 1) : (size - 1)];
+  
  
-
-  n += grid[i + 1][j + 1];
-  n += grid[i + 1][j - 1];
-
-  n += grid[i - 1][j + 1];
-  n += grid[i - 1][j - 1];
-  
-  
-  
   return n;
 }
 
@@ -119,13 +82,14 @@ int ** init_grid(int size)
   
   for (i = 0; i < size; i++){
     for (j = 0; j < size; j++){
-      grid[i][j] = (rand()%100<20);
+       grid[i][j] = (rand()%100<20);
+       //grid[i][j] = 0;
     }
   }
 
-  /*grid[size/2][size/2] = 1;
-  grid[size/2][size/2-1] = 1;
-  grid[size/2][size/2-2] = 1;*/
+  /* grid[size-1][0] = 1;
+  grid[size-1][1] = 1;
+  grid[size-1][2] = 1;*/
   return grid;
 }
 
