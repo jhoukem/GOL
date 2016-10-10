@@ -26,42 +26,33 @@ int get_neighbours(int ** grid, int i, int j, int l_size, int c_size)
 }
 
 
-/**
- * Return 0 if there is no new cells or no dead cells
- */
-int cpy_grid(int ** grid_old, int ** grid_new, int l_size, int c_size)
-{
-  int i, j, status;
-  status = 0;
-  for (i = 0; i < l_size; i++){
-    for (j = 0; j < c_size; j++){
-      if(grid_old[i][j] != grid_new[i][j]){
-	status = 1;
-	grid_old[i][j] = grid_new[i][j];
-      }
-    }
-  }
-  return status;
-}
-
-
-int update_grid(int ** grid_old, int ** grid_new, int l_size, int c_size)
+int update_grid(int *** grid_old, int *** grid_new, int l_size, int c_size)
 {
   int i, j, n, status;
-  status = 0;
+  status = 1;
+
+  int ** pp_old = *grid_old;
+  int ** pp_new = *grid_new;
+
   for (i = 0; i < l_size; i++){
     for (j = 0; j < c_size; j++){
-      n = get_neighbours(grid_old, i, j, l_size, c_size);
+      n = get_neighbours(pp_old, i, j, l_size, c_size);
       //printf("Cell %d %d has %d n\n", i, j, n);
-      if(grid_old[i][j]){ // alive
-	grid_new[i][j] = (n == 3 || n == 2 );
+      if(pp_old[i][j]){ // alive
+	pp_new[i][j] = (n == 3 || n == 2 );
       }else { // dead cell
-	grid_new[i][j] = (n == 3);
+	pp_new[i][j] = (n == 3);
       }
     }
   }
- 
-  status = cpy_grid(grid_old, grid_new, l_size, c_size);
+  
+
+  int ** tmp = *grid_old;
+  *grid_old = *grid_new;
+  *grid_new = tmp;
+
+
+
   return status;
 }
 
@@ -93,7 +84,7 @@ int ** init_grid(int l_size, int c_size)
   
   for (i = 0; i < l_size; i++){
     for (j = 0; j < c_size; j++){
-       grid[i][j] = (rand()%100 < 80);
+       grid[i][j] = (rand()%100 < 15);
        // grid[i][j] = 0;
     }
   }
@@ -141,7 +132,7 @@ int main(int argc, char * argv[])
     printf("\nCycle %d\n", ++counter);
     display_grid(grid, l_size, c_size);
     sleep(1);    
-    if(update_grid(grid, grid_tmp, l_size, c_size) == 0){ // No more update
+    if(update_grid(&grid, &grid_tmp, l_size, c_size) == 0){ // No more update
       break;
     }
     counter++;
