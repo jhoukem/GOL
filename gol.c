@@ -112,6 +112,14 @@ int ** init_grid(int l_size, int c_size, int alea_percent)
   return grid;
 }
 
+void free_grid(int ** grid, int l_size)
+{
+  int i;
+  for(i = 0; i < l_size; i++){
+    free(grid[i]);
+  }
+  free(grid);
+}
 
 int main(int argc, char * argv[])
 {
@@ -168,8 +176,8 @@ int main(int argc, char * argv[])
     
   }
   
-  // free_grid(grid, l_size, c_size);
-  // free_grid(grid_tmp, l_size, c_size);
+  free_grid(grid, l_size);
+  free_grid(grid_tmp, l_size);
   
   return 0;
 }
