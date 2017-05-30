@@ -51,7 +51,7 @@ void swap_grid(int *** grid_old, int *** grid_new)
 }
 
 /**
- * Simulate the world and calculate he next generation of cells.
+ * Simulate the world and calculate the next generation of cells.
  */
 void update_grid(int *** grid_old, int *** grid_new, int l_size, int c_size)
 {
@@ -91,7 +91,7 @@ void display_grid(int ** grid, int l_size, int c_size)
 }
 
 /**
- * Initialise a random grid with the gived size.
+ * Initialise a random grid with the size given.
  */
 int ** init_grid(int l_size, int c_size, int alea_percent)
 {
@@ -149,7 +149,7 @@ int main(int argc, char * argv[])
     printf("ALEA=%d\n", alea_percent);
   }
   if(l_size < 5 || c_size < 5){
-    printf("Error size min = 5\n");
+    printf("Error minimum size = 5\n");
     return -1;
   }
 
