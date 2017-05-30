@@ -121,52 +121,90 @@ void free_grid(int ** grid, int l_size)
   free(grid);
 }
 
+int is_integer(char *string)
+{
+  char c;
+  int i;
+
+  for(i = 0; string[i] != 0; i++){
+      c = string[i];
+      if(c < '0' || c > '9'){
+          return 0;
+      }
+  }
+  return 1;
+}
+
+void handle_arg(int argc, char **argv, int *l_size, int *c_size, int *wait_time, int *alea_percent)
+{
+  char *options = "r:c:t:a:h";
+  char current_option;
+  char help[512];
+
+  snprintf(help, 512, "Usage\n %s [OPTIONS]\n\nThe following options are availables:\n"
+  "-h,          Show this help menu\n"
+  "-r,          Set the number of row (5 min)\n"
+  "-c,          Set the number of colomns (5 min)\n"
+  "-t,          Set the time between each frame update (in microseconds)\n"
+  "-a,          Set the percentage of cells apparition on initialistion(100 max)\n", argv[0]);
+
+
+  while((current_option = getopt(argc, argv, options)) != -1){
+    int *opt_addr;    
+    
+    switch(current_option){    
+        case 'r': opt_addr = l_size; break;
+        case 'c': opt_addr = c_size; break;
+        case 't': opt_addr = wait_time; break;
+        case 'a': opt_addr = alea_percent; break;
+        case 'h': printf("%s", help); exit(0);
+    }
+
+    if(optarg != NULL){
+        // The argument is a valid integer.
+        if(is_integer(optarg)){
+          if((current_option == 'r' || current_option == 'c') && (atoi(optarg) < 5)){
+            fprintf(stderr, "Error: The minimum size for -%c is 5.\n", current_option);
+            exit(-1);
+          }
+          if(current_option == 'a' && (atoi(optarg) > 100)){
+            fprintf(stderr, "Error: The maximum value for -%c is 100.\n", current_option);
+            exit(-1);
+          }
+          if(current_option == 't' && (atoi(optarg) < 0)){
+            fprintf(stderr, "Error: The value for -%c should be positive.\n", current_option);
+            exit(-1);
+          }
+        *opt_addr = atoi(optarg);
+        } else {
+            fprintf(stderr, "Error: The value for -%c should be an integer.\n", current_option);
+            exit(-1);
+        }
+    } else {
+        exit(-1);
+    }
+  }
+}
+
 int main(int argc, char * argv[])
 {
   int l_size, c_size, counter, wait_time, alea_percent;
   int ** grid, ** grid_tmp;
+  
 
   counter = 0;
   wait_time = 100;
   alea_percent = 15;
+  l_size = c_size = 15;
 
-  if(argc < 2){
-    printf("Usage: %s [grid_size] or %s [line_size][columns_size][update_time][init_cells_apparition_percent] (the minimal size is 5)\n", argv[0], argv[0]);
-    return -1;
-  }
-
-  if(argc < 3){
-    l_size = c_size = atoi(argv[1]);
-  } else if (argc > 2){
-    l_size = atoi(argv[1]);
-    c_size = atoi(argv[2]);
-  }
-  if(argc > 3){
-    wait_time = atoi(argv[3]);
-  }
-  if(argc > 4){
-    alea_percent = atoi(argv[4]) > 100 ? 100 : atoi(argv[4]) ;
-    printf("ALEA=%d\n", alea_percent);
-  }
-  if(l_size < 5 || c_size < 5){
-    printf("Error minimum size = 5\n");
-    return -1;
-  }
-
-  printf("Use ^C to stop the GOL simulation.\n");
+  // Get the options.
+  handle_arg(argc, argv, &l_size, &c_size, &wait_time, &alea_percent);
   
+  // Initialization.
   grid = init_grid(l_size, c_size, alea_percent);
   grid_tmp = init_grid(l_size, c_size, alea_percent);
-
-
-  /*
-  for(counter = 0; counter < 4000; counter++){
-    
-    update_grid(&grid, &grid_tmp, l_size, c_size);
-  }
-  */
   
-  
+  // Game loop.
   while(1){
     
     printf("\nCycle %d\n", ++counter);
