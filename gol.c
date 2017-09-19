@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
+#include <sys/ioctl.h>
 
 
 /**
@@ -190,12 +191,15 @@ int main(int argc, char * argv[])
 {
   int l_size, c_size, counter, wait_time, alea_percent;
   int ** grid, ** grid_tmp;
-  
+ 
+  struct winsize w;
+  ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 
   counter = 0;
   wait_time = 100;
   alea_percent = 15;
-  l_size = c_size = 15;
+  l_size = w.ws_row-2;
+  c_size = w.ws_col;
 
   // Get the options.
   handle_arg(argc, argv, &l_size, &c_size, &wait_time, &alea_percent);
